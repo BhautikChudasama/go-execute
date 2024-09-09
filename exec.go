@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 type ExecTask struct {
@@ -54,6 +55,12 @@ type ExecTask struct {
 
 	// StderrWriter when set will receive a copy of stderr from the command
 	StdErrWriter io.Writer
+
+	// SysProcAttr holds optional, operating system-specific attributes.
+	// These attributes can be used to control various aspects of the process
+	// execution, such as setting the process group ID, controlling the
+	// creation of a new session, setting resource limits, and more.
+	SysProcAttr *syscall.SysProcAttr
 }
 
 type ExecResult struct {
@@ -123,6 +130,7 @@ func (et ExecTask) Execute(ctx context.Context) (ExecResult, error) {
 	}
 
 	cmd := exec.CommandContext(ctx, command, commandArgs...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.Dir = et.Cwd
 
 	if len(et.Env) > 0 {
