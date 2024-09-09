@@ -61,6 +61,10 @@ type ExecTask struct {
 	// execution, such as setting the process group ID, controlling the
 	// creation of a new session, setting resource limits, and more.
 	SysProcAttr *syscall.SysProcAttr
+
+	// Read only attribute set by the executor
+	// Use with caution
+	Process *os.Process
 }
 
 type ExecResult struct {
@@ -184,6 +188,8 @@ func (et ExecTask) Execute(ctx context.Context) (ExecResult, error) {
 		return ExecResult{}, startErr
 	}
 
+	et.Process = cmd.Process
+
 	exitCode := 0
 	execErr := cmd.Wait()
 	if execErr != nil {
@@ -191,6 +197,8 @@ func (et ExecTask) Execute(ctx context.Context) (ExecResult, error) {
 			exitCode = exitError.ExitCode()
 		}
 	}
+
+	et.Process = nil
 
 	return ExecResult{
 		Stdout:    stdoutBuff.String(),
