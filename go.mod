@@ -1,3 +1,3 @@
-module github.com/alexellis/go-execute/v2
+module github.com/BhautikChudasama/go-execute
 
-go 1.20
+go 1.22
