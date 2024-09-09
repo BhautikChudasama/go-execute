@@ -130,7 +130,7 @@ func (et ExecTask) Execute(ctx context.Context) (ExecResult, error) {
 	}
 
 	cmd := exec.CommandContext(ctx, command, commandArgs...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{}
+	cmd.SysProcAttr = et.SysProcAttr
 	cmd.Dir = et.Cwd
 
 	if len(et.Env) > 0 {
